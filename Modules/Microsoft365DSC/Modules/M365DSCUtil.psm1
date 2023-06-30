@@ -2847,17 +2847,18 @@ function Update-M365DSCDependencies
 
             if ((-not $found -or $Force) -and -not $ValidateOnly)
             {
-                if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
-                {
-                    Write-Information -MessageData "Installing $($dependency.ModuleName) version {$($dependency.RequiredVersion)}"
-                    Remove-Module $dependency.ModuleName -Force -ErrorAction SilentlyContinue
-                    Install-Module $dependency.ModuleName -RequiredVersion $dependency.RequiredVersion -AllowClobber -Force -Scope 'AllUsers'
-                    Import-Module $dependency.ModuleName -Force
-                }
-                else
-                {
-                    Write-Error 'Cannot update the dependencies for Microsoft365DSC. You need to run this command as a local administrator.'
-                }
+                #if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+                #{
+
+                #}
+                #else
+                #{
+                #    Write-Error 'Cannot update the dependencies for Microsoft365DSC. You need to run this command as a local administrator.'
+                #}
+                Write-Information -MessageData "Installing $($dependency.ModuleName) version {$($dependency.RequiredVersion)}"
+                Remove-Module $dependency.ModuleName -Force -ErrorAction SilentlyContinue
+                Install-Module $dependency.ModuleName -RequiredVersion $dependency.RequiredVersion -AllowClobber -Force -Scope 'CurrentUser'
+                Import-Module $dependency.ModuleName -Force
             }
 
             if (-not $found -and $validateOnly)

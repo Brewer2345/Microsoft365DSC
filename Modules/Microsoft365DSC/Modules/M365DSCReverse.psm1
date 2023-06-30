@@ -797,9 +797,9 @@ function Start-M365DSCConfigurationExtract
 
         if (!$AzureAutomation -and !$ManagedIdentity.IsPresent)
         {
-            if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
-            {
-                $LCMConfig = Get-DscLocalConfigurationManager
+            #if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+            #{
+                $LCMConfig = $null#Get-DscLocalConfigurationManager
                 if ($null -ne $LCMConfig.CertificateID)
                 {
                     try
@@ -829,13 +829,13 @@ function Start-M365DSCConfigurationExtract
                         -Value 'M365DSC.cer' `
                         -Description 'Path of the certificate used to encrypt credentials in the file.'
                 }
-            }
-            else
-            {
-                Write-Host "$($Global:M365DSCEmojiYellowCircle) Warning {" -NoNewline
-                Write-Host "Cannot export Local Configuration Manager settings. This process isn't executed with Administrative Privileges!" -NoNewline -ForegroundColor DarkCyan
-                Write-Host '}'
-            }
+            #}
+            #else
+           # {
+           #     Write-Host "$($Global:M365DSCEmojiYellowCircle) Warning {" -NoNewline
+           #     Write-Host "Cannot export Local Configuration Manager settings. This process isn't executed with Administrative Privileges!" -NoNewline -ForegroundColor DarkCyan
+           #     Write-Host '}'
+           # }
         }
         $outputConfigurationData = $OutputDSCPath + 'ConfigurationData.psd1'
         New-ConfigurationDataDocument -Path $outputConfigurationData

@@ -18,6 +18,10 @@ function Get-TargetResource
 
         [Parameter()]
         [System.Boolean]
+        $DisableCoPilot,
+
+        [Parameter()]
+        [System.Boolean]
         $DisableNewsletterSendout,
 
         [Parameter()]
@@ -117,6 +121,7 @@ function Get-TargetResource
             IsSingleInstance                               = 'Yes'
             WalkMeOptOut                                   = $PPTenantSettings.walkMeOptOut
             DisableNPSCommentsReachout                     = $PPTenantSettings.disableNPSCommentsReachout
+            DisableCoPilot                                 = $PPTenantSettings.powerPlatform.powerAutomate
             DisableNewsletterSendout                       = $PPTenantSettings.disableNewsletterSendout
             DisableEnvironmentCreationByNonAdminUsers      = $PPTenantSettings.disableEnvironmentCreationByNonAdminUsers
             DisablePortalsCreationByNonAdminUsers          = $PPTenantSettings.disablePortalsCreationByNonAdminUsers
@@ -173,6 +178,10 @@ function Set-TargetResource
         [Parameter()]
         [System.Boolean]
         $DisableEnvironmentCreationByNonAdminUsers,
+
+        [Parameter()]
+        [System.Boolean]
+        $DisableCoPilot,
 
         [Parameter()]
         [System.Boolean]
@@ -287,6 +296,10 @@ function Test-TargetResource
         [Parameter()]
         [System.Boolean]
         $DisableEnvironmentCreationByNonAdminUsers,
+
+        [Parameter()]
+        [System.Boolean]
+        $DisableCoPilot,
 
         [Parameter()]
         [System.Boolean]
