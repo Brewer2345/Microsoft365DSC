@@ -42,6 +42,14 @@ function Get-TargetResource
 
         [Parameter()]
         [System.Boolean]
+        $EnablePVAToPublishBots,
+
+        [Parameter()]
+        [System.Boolean]
+        $DisableDeveloperEnvironmentCreationByNonAdminUsers,
+
+        [Parameter()]
+        [System.Boolean]
         $DisableCapacityAllocationByEnvironmentAdmins,
 
         [Parameter()]
@@ -118,28 +126,30 @@ function Get-TargetResource
     {
         $PPTenantSettings = Get-TenantSettings -ErrorAction Stop
         return @{
-            IsSingleInstance                               = 'Yes'
-            WalkMeOptOut                                   = $PPTenantSettings.walkMeOptOut
-            DisableNPSCommentsReachout                     = $PPTenantSettings.disableNPSCommentsReachout
-            DisableCoPilot                                 = $PPTenantSettings.powerPlatform.powerAutomate
-            DisableNewsletterSendout                       = $PPTenantSettings.disableNewsletterSendout
-            DisableEnvironmentCreationByNonAdminUsers      = $PPTenantSettings.disableEnvironmentCreationByNonAdminUsers
-            DisablePortalsCreationByNonAdminUsers          = $PPTenantSettings.disablePortalsCreationByNonAdminUsers
-            DisableSurveyFeedback                          = $PPTenantSettings.disableSurveyFeedback
-            DisableTrialEnvironmentCreationByNonAdminUsers = $PPTenantSettings.disableTrialEnvironmentCreationByNonAdminUsers
-            DisableCapacityAllocationByEnvironmentAdmins   = $PPTenantSettings.disableCapacityAllocationByEnvironmentAdmins
-            DisableSupportTicketsVisibleByAllUsers         = $PPTenantSettings.disableSupportTicketsVisibleByAllUsers
-            DisableDocsSearch                              = $PPTenantSettings.powerPlatform.search.disableDocsSearch
-            DisableCommunitySearch                         = $PPTenantSettings.powerPlatform.search.disableCommunitySearch
-            DisableBingVideoSearch                         = $PPTenantSettings.powerPlatform.search.disableBingVideoSearch
-            DisableShareWithEveryone                       = $PPTenantSettings.powerPlatform.powerApps.disableShareWithEveryone
-            EnableGuestsToMake                             = $PPTenantSettings.powerPlatform.powerApps.enableGuestsToMake
-            ShareWithColleaguesUserLimit                   = $PPTenantSettings.powerPlatform.teamsIntegration.shareWithColleaguesUserLimit
-            Credential                                     = $Credential
-            ApplicationId                                  = $ApplicationId
-            TenantId                                       = $TenantId
-            CertificateThumbprint                          = $CertificateThumbprint
-            ApplicationSecret                              = $ApplicationSecret
+            IsSingleInstance                                    = 'Yes'
+            WalkMeOptOut                                        = $PPTenantSettings.walkMeOptOut
+            DisableNPSCommentsReachout                          = $PPTenantSettings.disableNPSCommentsReachout
+            DisableCoPilot                                      = $PPTenantSettings.powerPlatform.powerAutomate.disableCopilot
+            DisableNewsletterSendout                            = $PPTenantSettings.disableNewsletterSendout
+            DisableEnvironmentCreationByNonAdminUsers           = $PPTenantSettings.disableEnvironmentCreationByNonAdminUsers
+            DisableDeveloperEnvironmentCreationByNonAdminUsers  = $PPTenantSettings.powerPlatform.governance.disableDeveloperEnvironmentCreationByNonAdminUsers
+            DisablePortalsCreationByNonAdminUsers               = $PPTenantSettings.disablePortalsCreationByNonAdminUsers
+            DisableSurveyFeedback                               = $PPTenantSettings.disableSurveyFeedback
+            DisableTrialEnvironmentCreationByNonAdminUsers      = $PPTenantSettings.disableTrialEnvironmentCreationByNonAdminUsers
+            DisableCapacityAllocationByEnvironmentAdmins        = $PPTenantSettings.disableCapacityAllocationByEnvironmentAdmins
+            EnablePVAToPublishBots                              = $PPTenantSettings.powerPlatform.intelligence.enableOpenAiBotPublishing
+            DisableSupportTicketsVisibleByAllUsers              = $PPTenantSettings.disableSupportTicketsVisibleByAllUsers
+            DisableDocsSearch                                   = $PPTenantSettings.powerPlatform.search.disableDocsSearch
+            DisableCommunitySearch                              = $PPTenantSettings.powerPlatform.search.disableCommunitySearch
+            DisableBingVideoSearch                              = $PPTenantSettings.powerPlatform.search.disableBingVideoSearch
+            DisableShareWithEveryone                            = $PPTenantSettings.powerPlatform.powerApps.disableShareWithEveryone
+            EnableGuestsToMake                                  = $PPTenantSettings.powerPlatform.powerApps.enableGuestsToMake
+            ShareWithColleaguesUserLimit                        = $PPTenantSettings.powerPlatform.teamsIntegration.shareWithColleaguesUserLimit
+            Credential                                          = $Credential
+            ApplicationId                                       = $ApplicationId
+            TenantId                                            = $TenantId
+            CertificateThumbprint                               = $CertificateThumbprint
+            ApplicationSecret                                   = $ApplicationSecret
         }
     }
     catch
@@ -178,6 +188,14 @@ function Set-TargetResource
         [Parameter()]
         [System.Boolean]
         $DisableEnvironmentCreationByNonAdminUsers,
+
+        [Parameter()]
+        [System.Boolean]
+        $EnablePVAToPublishBots,
+
+        [Parameter()]
+        [System.Boolean]
+        $DisableDeveloperEnvironmentCreationByNonAdminUsers,
 
         [Parameter()]
         [System.Boolean]
@@ -296,6 +314,14 @@ function Test-TargetResource
         [Parameter()]
         [System.Boolean]
         $DisableEnvironmentCreationByNonAdminUsers,
+
+        [Parameter()]
+        [System.Boolean]
+        $EnablePVAToPublishBots,
+
+        [Parameter()]
+        [System.Boolean]
+        $DisableDeveloperEnvironmentCreationByNonAdminUsers,
 
         [Parameter()]
         [System.Boolean]
