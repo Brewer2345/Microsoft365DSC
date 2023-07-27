@@ -549,6 +549,15 @@ function Get-M365DSCPowerPlatformTenantSettings
             teamsIntegration = @{
                 shareWithColleaguesUserLimit = $Parameters.ShareWithColleaguesUserLimit
             }
+            powerAutomate = @{
+                disableCopilot = $Parameters.DisableCoPilot
+            }
+            governance = @{
+                disableDeveloperEnvironmentCreationByNonAdminUsers = $Parameters.DisableDeveloperEnvironmentCreationByNonAdminUsers
+            }
+            intelligence = @{
+                enableOpenAiBotPublishing = $Parameters.EnablePVAToPublishBots
+            }
         }
     }
 

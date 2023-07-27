@@ -7,37 +7,33 @@ function Get-TargetResource
         [System.String]
         $DisplayName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [System.String]
-        $PolicyName,
+        $defaultConnectorsClassification = 'Blocked',
 
         [Parameter()]
         [System.String]
-        $Type,
+        $environments,
 
         [Parameter()]
         [System.String]
-        $Constraints,
+        $environmentType,
 
         [Parameter()]
         [System.String]
-        $BusinessDataGroup,
+        $filterType,
 
         [Parameter()]
         [System.String]
-        $NonBusinessDataGroup,
+        $policyName,
 
         [Parameter()]
         [System.String]
-        $BlockedGroup,
+        $type,
 
         [Parameter()]
         [System.String]
-        $FilterType,
-
-        [Parameter()]
-        [System.String]
-        $Environments,
+        $connectorGroups,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
@@ -96,22 +92,57 @@ function Get-TargetResource
 
         Write-Verbose -Message "Found DLP Policy {$DisplayName}"
 
+        [Array]$businessdataGroupConnectors = $dlpPolicy.BusinessDataGroup | ForEach-Object {
+            return @{
+                id = $_.id
+                name  = $_.name
+                type = $_.type
+            }
+        }
+
+        [Array]$NonBusinessDataGroupConnectors = $dlpPolicy.NonBusinessDataGroup | ForEach-Object {
+            return @{
+                id = $_.id
+                name  = $_.name
+                type = $_.type
+            }
+        }
+
+        [Array]$BlockedGroupConnectors = $dlpPolicy.BlockedGroup | ForEach-Object {
+            return @{
+                id = $_.id
+                name  = $_.name
+                type = $_.type
+            }
+        }
+
+        $connectorGroupstemp = @()
+        $connectorGroupstemp += @{
+            classification = "Confidential"
+            connectors  = $businessdataGroupConnectors
+        }
+        $connectorGroupstemp += @{
+            classification = "General"
+            connectors  = $NonBusinessDataGroupConnectors
+        }
+        $connectorGroupstemp += @{
+            classification = "Blocked"
+            connectors  = $BlockedGroupConnectors
+        }
+
         return @{
-            PolicyName              = $dlpPolicy.PolicyName
-            Type                    = $dlpPolicy.Type
-            DisplayName             = $DisplayName
-            Constraints             = $dlpPolicy.Constraints
-            BusinessDataGroup       = $dlpPolicy.BusinessDataGroup
-            NonBusinessDataGroup    = $dlpPolicy.NonBusinessDataGroup
-            BlockedGroup            = $dlpPolicy.BlockedGroup
-            FilterType              = $dlpPolicy.FilterType
-            Environments            = $dlpPolicy.Environments
-            Ensure                  = 'Present'
-            Credential              = $Credential
-            ApplicationId           = $ApplicationId
-            TenantId                = $TenantId
-            CertificateThumbprint   = $CertificateThumbprint
-            ApplicationSecret       = $ApplicationSecret
+            PolicyName                      = $dlpPolicy.PolicyName
+            Type                            = $dlpPolicy.Type
+            DisplayName                     = $DisplayName
+            ConnectorGroups                 = ConvertTo-Json -Depth 100 -InputObject $connectorGroupstemp -EscapeHandling EscapeNonAscii
+            FilterType                      = $dlpPolicy.FilterType
+            Environments                    = ConvertTo-Json -Depth 100 -InputObject $dlpPolicy.Environments -EscapeHandling EscapeNonAscii
+            Ensure                          = 'Present'
+            Credential                      = $Credential
+            ApplicationId                   = $ApplicationId
+            TenantId                        = $TenantId
+            CertificateThumbprint           = $CertificateThumbprint
+            ApplicationSecret               = $ApplicationSecret
         }
     }
     catch
@@ -135,37 +166,33 @@ function Set-TargetResource
         [System.String]
         $DisplayName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [System.String]
-        $PolicyName,
+        $defaultConnectorsClassification = 'Blocked',
 
         [Parameter()]
         [System.String]
-        $Type,
+        $environments,
 
         [Parameter()]
         [System.String]
-        $Constraints,
+        $environmentType,
 
         [Parameter()]
         [System.String]
-        $BusinessDataGroup,
+        $filterType,
 
         [Parameter()]
         [System.String]
-        $NonBusinessDataGroup,
+        $policyName,
 
         [Parameter()]
         [System.String]
-        $BlockedGroup,
+        $type,
 
         [Parameter()]
         [System.String]
-        $FilterType,
-
-        [Parameter()]
-        [System.String]
-        $Environments,
+        $connectorGroups,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
@@ -225,8 +252,7 @@ function Set-TargetResource
         Write-Verbose -Message "Creating new DLP Policy {$DisplayName}"
         try
         {
-            #New-AdminPowerAppEnvironment @CurrentParameters
-            New-DlpPolicy @CurrentParameters
+            New-PowerPlatformDLPPolicy @CurrentParameters
         }
         catch
         {
@@ -241,8 +267,7 @@ function Set-TargetResource
     elseif ($Ensure -eq 'Absent' -and $CurrentValues.Ensure -eq 'Present')
     {
         Write-Verbose -Message "Removing existing instance of DLP Policy {$DisplayName}"
-        Remove-AdminPowerAppEnvironment -EnvironmentName -$DisplayName | Out-Null
-        Remove-DlpPolicy -PolicyName -$DisplayName
+        Remove-DlpPolicy -PolicyName -$DisplayName | Out-Null
     }
 }
 
@@ -255,37 +280,33 @@ function Test-TargetResource
         [System.String]
         $DisplayName,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [System.String]
-        $PolicyName,
+        $defaultConnectorsClassification = 'Blocked',
 
         [Parameter()]
         [System.String]
-        $Type,
+        $environments,
 
         [Parameter()]
         [System.String]
-        $Constraints,
+        $environmentType,
 
         [Parameter()]
         [System.String]
-        $BusinessDataGroup,
+        $filterType,
 
         [Parameter()]
         [System.String]
-        $NonBusinessDataGroup,
+        $type,
 
         [Parameter()]
         [System.String]
-        $BlockedGroup,
+        $policyName,
 
         [Parameter()]
         [System.String]
-        $FilterType,
-
-        [Parameter()]
-        [System.String]
-        $Environments,
+        $connectorGroups,
 
         [Parameter()]
         [ValidateSet('Present', 'Absent')]
@@ -386,7 +407,6 @@ function Export-TargetResource
 
     try
     {
-        #[array]$environments = Get-AdminPowerAppEnvironment -ErrorAction Stop
         [array]$policies = Get-AdminDlpPolicy -ErrorAction Stop
         $dscContent = ''
         $i = 1
@@ -407,15 +427,7 @@ function Export-TargetResource
             Write-Host $Params
 
             $Params = @{
-                PolicyName              = $policy.PolicyName
-                Type                    = $policy.Type
                 DisplayName             = $policy.DisplayName
-                Constraints             = $policy.Constraints
-                BusinessDataGroup       = $policy.BusinessDataGroup
-                NonBusinessDataGroup    = $policy.NonBusinessDataGroup
-                BlockedGroup            = $policy.BlockedGroup
-                FilterType              = $policy.FilterType
-                Environments            = $policy.Environments
                 Credential              = $Credential
                 ApplicationId           = $ApplicationId
                 TenantId                = $TenantId
@@ -454,4 +466,121 @@ function Export-TargetResource
     }
 }
 
+#Helper functions
+function New-PowerPlatformDLPPolicy {
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [Parameter()]
+        [System.String]
+        $defaultConnectorsClassification = 'Blocked',
+
+        [Parameter()]
+        [System.String]
+        $environments,
+
+        [Parameter()]
+        [System.String]
+        $environmentType,
+
+        [Parameter()]
+        [System.String]
+        $connectorGroups
+    )
+    begin {
+        # Validate if environment with the same name already exists
+        $existingPolicy = Invoke-PowerOpsRequest -Method Get -Path '/providers/PowerPlatform.Governance/v1/policies?$top=100' | Where-Object { $_.displayName -eq $Name }
+        if ($existingPolicy) {
+            throw "DLP Policy with DisplayName '$Name' already exists in Power Platform. Retry command with the -Force switch if you really want to create the policy with the duplicate name"
+        }
+    }
+    process {
+        # API payload
+        try {
+            Write-Verbose -Message "Creating DLP Policy $Name"
+
+            $newPolicy = [pscustomobject]@{
+                displayName = $Name
+                defaultConnectorsClassification = $defaultConnectorsClassification
+                connectorGroups = $connectorGroups
+                environmentType = $environmentType
+                environments = $environments
+                etag = $null
+            }
+            Invoke-PowerOpsRequest -Method Post -Path '/providers/PowerPlatform.Governance/v1/policies' -RequestBody $newPolicy
+        }
+        catch {
+            Write-Error $_
+        }
+
+    }
+    end {
+
+    }
+}
+
+function Invoke-PowerPlatformRequest {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [ValidateSet('Get', 'Post', 'Patch', 'Delete', 'Put')]
+        [String]
+        $Method,
+
+        [Parameter(Mandatory = $false)]
+        [Object]
+        $RequestBody,
+
+        [Parameter(Mandatory = $true)]
+        $Path,
+
+        [Parameter(Mandatory = $false)]
+        [switch]$Force
+    )
+
+    begin {
+        # Set base URI
+        $BaseUri = "https://api.bap.microsoft.com"
+        if (-not $PSBoundParameters['Force']) {
+            $ApiVersion = if ($Path -notmatch '\?') { '?api-version=2021-07-01' } else { '&api-version=2021-07-01' }
+        }
+        else {
+            $ApiVersion = $null
+        }
+    }
+    process {
+        $RestParameters = @{
+            "Uri"         = "$($BaseUri)$($Path)$($ApiVersion)"
+            "Method"      = $Method
+            "Headers"     = $Headers
+            "ContentType" = 'application/json; charset=utf-8'
+        }
+        if ($RequestBody) {
+            $RestParameters["Body"] = $RequestBody
+        }
+        try {
+            $Request = InvokeApi -Method $Method -Route "$($BaseUri)$($Path)$($ApiVersion)" -Body $RequestBody -ThrowOnFailure
+            if ($Method -eq 'Get') {
+                if ($Request.value) {
+                    return $Request.value
+                }
+                if ($Request.Properties) {
+                    return $Request.Properties
+                }
+            }
+            else {
+                $Request
+            }
+        }
+        catch {
+            throw $_
+        }
+    }
+    end {
+
+    }
+}
 Export-ModuleMember -Function *-TargetResource
